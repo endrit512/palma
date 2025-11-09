@@ -1,0 +1,65 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        brown: {
+          50: '#faf8f6',
+          100: '#f5f0eb',
+          200: '#e8ddd0',
+          300: '#d4c3af',
+          400: '#b89d7e',
+          500: '#a07e56',
+          600: '#8b6742',
+          700: '#735437',
+          800: '#5a3b2e',
+          900: '#4a2f25',
+          950: '#2d1e16',
+        },
+        vanilla: {
+          50: '#fdfcfb',
+          100: '#faf9f7',
+          200: '#f7efe6',
+          300: '#f3e6d8',
+          400: '#eedbc8',
+          500: '#e8d0b8',
+          600: '#d4b89a',
+          700: '#b89d7e',
+          800: '#9a8165',
+          900: '#7d6651',
+        },
+        gold: {
+          50: '#fdfbf5',
+          100: '#faf6e9',
+          200: '#f4eac8',
+          300: '#ead9a3',
+          400: '#ddc67c',
+          500: '#c9a66b',
+          600: '#b38e56',
+          700: '#967548',
+          800: '#7a5e3d',
+          900: '#654e33',
+        },
+      },
+      fontFamily: {
+        display: ['Playfair Display', 'serif'],
+        sans: ['Inter', 'sans-serif'],
+      },
+      boxShadow: {
+        '3d': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 10px 15px -3px rgba(90, 59, 46, 0.1)',
+        '3d-lg': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 40px -10px rgba(90, 59, 46, 0.15)',
+        '3d-xl': '0 20px 50px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -10px rgba(90, 59, 46, 0.2)',
+        'inner-3d': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        '4d': '0 2px 4px rgba(0, 0, 0, 0.05), 0 8px 16px rgba(0, 0, 0, 0.08), 0 16px 32px rgba(90, 59, 46, 0.12), 0 32px 64px rgba(90, 59, 46, 0.08)',
+        '4d-lg': '0 4px 8px rgba(0, 0, 0, 0.06), 0 12px 24px rgba(0, 0, 0, 0.1), 0 24px 48px rgba(90, 59, 46, 0.15), 0 48px 96px rgba(90, 59, 46, 0.1)',
+        '4d-xl': '0 8px 16px rgba(0, 0, 0, 0.08), 0 16px 32px rgba(0, 0, 0, 0.12), 0 32px 64px rgba(90, 59, 46, 0.18), 0 64px 128px rgba(90, 59, 46, 0.12)',
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'texture': "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E\")",
+      },
+    },
+  },
+  plugins: [],
+};
