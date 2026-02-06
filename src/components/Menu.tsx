@@ -1,246 +1,143 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MenuItem {
   name: string;
   description: string;
   price: string;
   image: string;
-  category: 'cakes' | 'croissants' | 'traditional' | 'drinks';
 }
+
+const menuData = {
+  cakes: [
+    { nameEn: 'Chocolate Cake', nameSq: 'Torte Cokollatë', descEn: 'Rich cake with Belgian chocolate', descSq: 'Torte e pasur me cokollatë belge', price: '25', image: 'https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Fruit Cake', nameSq: 'Torte Frutash', descEn: 'Fresh seasonal fruits', descSq: 'Fruta te fresketa sezonale', price: '22', image: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Tiramisu Cake', nameSq: 'Torte Tiramisu', descEn: 'Traditional Italian recipe', descSq: 'Recete tradicionale italiane', price: '24', image: 'https://images.pexels.com/photos/6880219/pexels-photo-6880219.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Almond Cake', nameSq: 'Torte Bajame', descEn: 'Made with ground almonds', descSq: 'E bere me bajame te bluar', price: '23', image: 'https://images.pexels.com/photos/1854652/pexels-photo-1854652.jpeg?auto=compress&cs=tinysrgb&w=600' },
+  ],
+  croissants: [
+    { nameEn: 'Classic Croissant', nameSq: 'Kroasan Klasik', descEn: 'Baked fresh every morning', descSq: 'I pjekur te fresket cdo mengjes', price: '2.50', image: 'https://images.pexels.com/photos/2135677/pexels-photo-2135677.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Chocolate Croissant', nameSq: 'Kroasan me Cokollatë', descEn: 'Filled with soft chocolate', descSq: 'Mbushur me cokollatë te bute', price: '3', image: 'https://images.pexels.com/photos/3892469/pexels-photo-3892469.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Almond Croissant', nameSq: 'Kroasan me Bajame', descEn: 'With sweet almond filling', descSq: 'Me mbushje bajamesh te embel', price: '3.50', image: 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=600' },
+  ],
+  traditional: [
+    { nameEn: 'Baklava', nameSq: 'Bakllava', descEn: 'Traditional recipe with walnuts', descSq: 'Recete tradicionale me arra', price: '5', image: 'https://images.pexels.com/photos/8104280/pexels-photo-8104280.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Tulumba', nameSq: 'Tulumba', descEn: 'Sweet with syrup', descSq: 'E embel me shurup', price: '4', image: 'https://images.pexels.com/photos/7363676/pexels-photo-7363676.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Kadaif', nameSq: 'Kadaif', descEn: 'With walnuts and cinnamon', descSq: 'Me arra dhe kanelle', price: '4.50', image: 'https://images.pexels.com/photos/6880219/pexels-photo-6880219.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Revani', nameSq: 'Revani', descEn: 'Dessert with coconut', descSq: 'Embelsire me kokos', price: '4.20', image: 'https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?auto=compress&cs=tinysrgb&w=600' },
+  ],
+  drinks: [
+    { nameEn: 'Espresso', nameSq: 'Espresso', descEn: 'Strong Italian coffee', descSq: 'Kafe e forte italiane', price: '1.50', image: 'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Cappuccino', nameSq: 'Cappuccino', descEn: 'With frothed milk', descSq: 'Me qumesht te shkumezuar', price: '2', image: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Latte Macchiato', nameSq: 'Latte Macchiato', descEn: 'Layers of milk and coffee', descSq: 'Shtresa te qumeshtit dhe kafese', price: '2.50', image: 'https://images.pexels.com/photos/1251175/pexels-photo-1251175.jpeg?auto=compress&cs=tinysrgb&w=600' },
+    { nameEn: 'Herbal Tea', nameSq: 'Caj i Bimeve', descEn: 'Selection of natural herbs', descSq: 'Perzgjedhje e bimeve natyrale', price: '2', image: 'https://images.pexels.com/photos/1638280/pexels-photo-1638280.jpeg?auto=compress&cs=tinysrgb&w=600' },
+  ],
+};
+
+type Category = keyof typeof menuData;
 
 export function Menu() {
   const { t, i18n } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'cakes' | 'croissants' | 'traditional' | 'drinks'>('cakes');
+  const [activeTab, setActiveTab] = useState<Category>('cakes');
+  const isSq = i18n.language === 'sq';
 
-  const menuItems: Record<string, MenuItem[]> = {
-    cakes: [
-      {
-        name: i18n.language === 'sq' ? 'Torte Çokollatë' : 'Chocolate Cake',
-        description: i18n.language === 'sq' ? 'Torte e pasur me çokollatë belge' : 'Rich cake with Belgian chocolate',
-        price: '€25',
-        image: 'https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'cakes',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Torte Frutash' : 'Fruit Cake',
-        description: i18n.language === 'sq' ? 'Fruta të freskëta sezonale' : 'Fresh seasonal fruits',
-        price: '€22',
-        image: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'cakes',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Torte Tiramisu' : 'Tiramisu Cake',
-        description: i18n.language === 'sq' ? 'Recetë tradicionale italiane' : 'Traditional Italian recipe',
-        price: '€24',
-        image: 'https://images.pexels.com/photos/6880219/pexels-photo-6880219.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'cakes',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Torte Bajame' : 'Almond Cake',
-        description: i18n.language === 'sq' ? 'E bërë me bajame të bluar' : 'Made with ground almonds',
-        price: '€23',
-        image: 'https://images.pexels.com/photos/1854652/pexels-photo-1854652.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'cakes',
-      },
-    ],
-    croissants: [
-      {
-        name: i18n.language === 'sq' ? 'Kroasan Klasik' : 'Classic Croissant',
-        description: i18n.language === 'sq' ? 'I pjekur të freskët çdo mëngjes' : 'Baked fresh every morning',
-        price: '€2.50',
-        image: 'https://images.pexels.com/photos/2135677/pexels-photo-2135677.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'croissants',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Kroasan me Çokollatë' : 'Chocolate Croissant',
-        description: i18n.language === 'sq' ? 'Mbushur me çokollatë të butë' : 'Filled with soft chocolate',
-        price: '€3',
-        image: 'https://images.pexels.com/photos/3892469/pexels-photo-3892469.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'croissants',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Kroasan me Bajame' : 'Almond Croissant',
-        description: i18n.language === 'sq' ? 'Me mbushje bajamesh të ëmbël' : 'With sweet almond filling',
-        price: '€3.50',
-        image: 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'croissants',
-      },
-    ],
-    traditional: [
-      {
-        name: i18n.language === 'sq' ? 'Bakllava' : 'Baklava',
-        description: i18n.language === 'sq' ? 'Recetë tradicionale me arra' : 'Traditional recipe with walnuts',
-        price: '€5',
-        image: 'https://images.pexels.com/photos/8104280/pexels-photo-8104280.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'traditional',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Tulumba' : 'Tulumba',
-        description: i18n.language === 'sq' ? 'E ëmbël me shurup' : 'Sweet with syrup',
-        price: '€4',
-        image: 'https://images.pexels.com/photos/7363676/pexels-photo-7363676.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'traditional',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Kadaif' : 'Kadaif',
-        description: i18n.language === 'sq' ? 'Me arra dhe kanellë' : 'With walnuts and cinnamon',
-        price: '€4.50',
-        image: 'https://images.pexels.com/photos/6880219/pexels-photo-6880219.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'traditional',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Revani' : 'Revani',
-        description: i18n.language === 'sq' ? 'Ëmbëlsirë me kokos' : 'Dessert with coconut',
-        price: '€4.20',
-        image: 'https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'traditional',
-      },
-    ],
-    drinks: [
-      {
-        name: i18n.language === 'sq' ? 'Espresso' : 'Espresso',
-        description: i18n.language === 'sq' ? 'Kafe e fortë italiane' : 'Strong Italian coffee',
-        price: '€1.50',
-        image: 'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'drinks',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Cappuccino' : 'Cappuccino',
-        description: i18n.language === 'sq' ? 'Me qumësht të shkumëzuar' : 'With frothed milk',
-        price: '€2',
-        image: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'drinks',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Latte Macchiato' : 'Latte Macchiato',
-        description: i18n.language === 'sq' ? 'Shtresa të qumështit dhe kafesë' : 'Layers of milk and coffee',
-        price: '€2.50',
-        image: 'https://images.pexels.com/photos/1251175/pexels-photo-1251175.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'drinks',
-      },
-      {
-        name: i18n.language === 'sq' ? 'Çaj i Bimëve' : 'Herbal Tea',
-        description: i18n.language === 'sq' ? 'Përzgjedhje e bimëve natyrale' : 'Selection of natural herbs',
-        price: '€2',
-        image: 'https://images.pexels.com/photos/1638280/pexels-photo-1638280.jpeg?auto=compress&cs=tinysrgb&w=400',
-        category: 'drinks',
-      },
-    ],
-  };
-
-  const tabs: Array<{ key: typeof activeTab; label: string }> = [
+  const tabs: Array<{ key: Category; label: string }> = [
     { key: 'cakes', label: t('menu.tabs.cakes') },
     { key: 'croissants', label: t('menu.tabs.croissants') },
     { key: 'traditional', label: t('menu.tabs.traditional') },
     { key: 'drinks', label: t('menu.tabs.drinks') },
   ];
 
-  return (
-    <section id="menu" className="relative py-24 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-300/20 rounded-full blur-3xl" />
-      </div>
+  const items: MenuItem[] = menuData[activeTab].map((item) => ({
+    name: isSq ? item.nameSq : item.nameEn,
+    description: isSq ? item.descSq : item.descEn,
+    price: item.price,
+    image: item.image,
+  }));
 
-      <div className="absolute inset-0">
-        <div className="absolute top-[15%] left-[10%] w-24 h-24 opacity-10 animate-bounce" style={{ animationDuration: '6s' }}>
-          <img
-            src="https://images.pexels.com/photos/1854652/pexels-photo-1854652.jpeg?auto=compress&cs=tinysrgb&w=200"
-            alt=""
-            className="w-full h-full object-cover rounded-2xl shadow-xl"
-          />
-        </div>
-        <div className="absolute top-[60%] right-[15%] w-32 h-32 opacity-10 animate-bounce" style={{ animationDuration: '7s', animationDelay: '1s' }}>
-          <img
-            src="https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=200"
-            alt=""
-            className="w-full h-full object-cover rounded-2xl shadow-xl"
-          />
-        </div>
-        <div className="absolute bottom-[20%] left-[20%] w-28 h-28 opacity-10 animate-bounce" style={{ animationDuration: '5.5s', animationDelay: '0.5s' }}>
-          <img
-            src="https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?auto=compress&cs=tinysrgb&w=200"
-            alt=""
-            className="w-full h-full object-cover rounded-2xl shadow-xl"
-          />
-        </div>
+  return (
+    <section id="menu" className="relative py-28 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-[10%] w-80 h-80 bg-accent-500/[0.04] rounded-full blur-[100px]" />
+        <div className="absolute bottom-20 left-[5%] w-96 h-96 bg-warm-500/[0.03] rounded-full blur-[100px]" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="font-display text-5xl md:text-6xl font-bold text-brown-800 mb-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <h2 className="font-display text-4xl md:text-6xl font-bold text-white mb-4">
             {t('menu.title')}
           </h2>
-          <p className="text-lg text-brown-600 max-w-2xl mx-auto font-medium">
+          <p className="text-lg text-white/40 max-w-2xl mx-auto">
             {t('menu.subtitle')}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`relative px-8 py-3.5 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
+              className={`relative px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
                 activeTab === tab.key
-                  ? 'shadow-4d-lg transform scale-105'
-                  : 'shadow-4d hover:shadow-4d-lg hover:-translate-y-1'
+                  ? 'glass-button'
+                  : 'text-white/50 hover:text-white hover:bg-white/[0.05] border border-transparent hover:border-white/[0.08]'
               }`}
             >
-              {activeTab === tab.key ? (
-                <>
-                  <div className="absolute inset-0 bg-gradient-to-r from-brown-700 via-brown-600 to-brown-700" />
-                  <span className="relative z-10 text-vanilla-50">{tab.label}</span>
-                </>
-              ) : (
-                <>
-                  <div className="absolute inset-0 bg-white" />
-                  <span className="relative z-10 text-brown-700">{tab.label}</span>
-                </>
-              )}
+              {tab.label}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {menuItems[activeTab].map((item, index) => (
-            <div
-              key={index}
-              className="group bg-white rounded-3xl overflow-hidden shadow-4d hover:shadow-4d-xl transition-all duration-500 transform hover:-translate-y-4 hover:rotate-1"
-              style={{
-                perspective: '1000px',
-                transformStyle: 'preserve-3d',
-              }}
-            >
-              <div className="relative w-full h-56 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-brown-900/70 via-brown-900/30 to-transparent z-10" />
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                />
-              </div>
-              <div className="p-6 bg-gradient-to-br from-white to-vanilla-50">
-                <h3 className="font-display text-xl font-bold text-brown-800 mb-2">
-                  {item.name}
-                </h3>
-                <p className="text-brown-600 text-sm mb-4 leading-relaxed h-10">
-                  {item.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 bg-clip-text text-transparent">
-                    {item.price}
-                  </span>
-                  <button className="px-5 py-2.5 bg-gradient-to-r from-brown-700 to-brown-600 text-vanilla-50 rounded-xl hover:from-brown-600 hover:to-brown-500 transition-all duration-300 text-sm font-semibold shadow-4d hover:shadow-4d-lg transform hover:-translate-y-1">
-                    {i18n.language === 'sq' ? 'Porosit' : 'Order'}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            {items.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="glass-card group overflow-hidden"
+              >
+                <div className="relative h-52 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark-950/80 via-dark-950/20 to-transparent z-10" />
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute top-3 right-3 z-20 px-3 py-1.5 glass rounded-lg">
+                    <span className="text-accent-400 font-bold text-sm">{item.price}</span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-bold text-white mb-1.5 group-hover:text-accent-400 transition-colors">
+                    {item.name}
+                  </h3>
+                  <p className="text-white/40 text-sm leading-relaxed mb-4">
+                    {item.description}
+                  </p>
+                  <button className="w-full py-2.5 text-sm font-medium text-accent-400 border border-accent-500/20 rounded-lg hover:bg-accent-500/10 hover:border-accent-500/30 transition-all duration-300">
+                    {isSq ? 'Porosit' : 'Order'}
                   </button>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );

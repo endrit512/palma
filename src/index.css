@@ -8,23 +8,40 @@
   }
 
   body {
-    @apply bg-vanilla-100 text-brown-800;
+    @apply bg-dark-950 text-white font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-accent-500/30 text-white;
   }
 }
 
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 1s ease-in;
+@layer components {
+  .glass {
+    @apply bg-white/[0.06] backdrop-blur-xl border border-white/[0.08] shadow-glass;
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .glass-card {
+    @apply bg-white/[0.05] backdrop-blur-lg border border-white/[0.08] rounded-2xl shadow-glass transition-all duration-500;
+  }
+
+  .glass-card:hover {
+    @apply bg-white/[0.09] border-white/[0.14] shadow-glass-lg;
+  }
+
+  .glass-input {
+    @apply bg-white/[0.06] backdrop-blur-sm border border-white/[0.1] rounded-xl px-5 py-3.5 text-white placeholder-white/30 focus:outline-none focus:border-accent-500/50 focus:bg-white/[0.08] focus:ring-1 focus:ring-accent-500/20 transition-all duration-300;
+  }
+
+  .glass-button {
+    @apply relative px-8 py-3.5 bg-accent-500/90 text-dark-950 rounded-xl font-semibold overflow-hidden transition-all duration-300 hover:bg-accent-400 hover:shadow-glow;
+  }
+
+  .glass-button-outline {
+    @apply relative px-8 py-3.5 bg-white/[0.06] backdrop-blur-sm border border-white/[0.15] text-white rounded-xl font-semibold overflow-hidden transition-all duration-300 hover:bg-white/[0.12] hover:border-white/[0.25];
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent-300 via-accent-400 to-accent-300 bg-clip-text text-transparent;
   }
 }
